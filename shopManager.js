@@ -34,12 +34,6 @@ let shoppingCart = [];
  * Helper Function #1: countTotalProducts
  * @param {Array} cart - Array of product objects currently in the cart
  * @returns {number} The total count of all unit quantities combined
- *
- * INSTRUCTIONS:
- * 1. Create a variable initialized to 0 (e.g., let total = 0).
- * 2. Loop through the cart array using a for...of loop.
- * 3. Add each item's quantity property to total (total += item.quantity).
- * 4. Return total.
  */
 function countTotalProducts(cart) {
   let total = 0;
@@ -53,12 +47,6 @@ function countTotalProducts(cart) {
  * Helper Function #2: calculateSubtotal
  * @param {Array} cart - Array of product objects in the cart
  * @returns {number} Total monetary value before any discounts
- *
- * INSTRUCTIONS:
- * 1. Create a variable initialized to 0 (e.g., let subtotal = 0).
- * 2. Loop through the cart array.
- * 3. Multiply item.price * item.quantity and add it to subtotal.
- * 4. Return subtotal.
  */
 function calculateSubtotal(cart) {
   let subtotal = 0;
@@ -73,13 +61,6 @@ function calculateSubtotal(cart) {
  * @param {Array} cart - Array of product objects in the cart
  * @param {number} discountRate - The percentage discount (e.g., 0.10 for 10%)
  * @returns {number} Total monetary discount amount applied
- *
- * INSTRUCTIONS:
- * 1. Create a variable initialized to 0 (e.g., let discountTotal = 0).
- * 2. Loop through the cart array.
- * 3. IF item.appliesDiscount is true:
- *    calculate (item.price * item.quantity) * discountRate and add to discountTotal.
- * 4. Return discountTotal.
  */
 function calculateDiscount(
   cart,
@@ -97,15 +78,18 @@ function calculateDiscount(
 /**
  * Helper Function #4: displayCartItems
  * @param {Array} cart - Array of product objects in the cart
- *
- * INSTRUCTIONS:
- * 1. Check if cart.length === 0. If true, print "Cart is empty" and exit.
- * 2. Loop through cart items using console.log() to print:
- *    - Item name
- *    - Unit price
- *    - Quantity
- *    - Item subtotal (price * quantity)
  */
 function displayCartItems(cart) {
-  // TODO: Implement logic here
+  if (cart.length === 0) {
+    console.log("Cart is empty");
+    return;
+  }
+
+  for (const item of cart) {
+    console.log(`
+        - Item name: ${item.name}
+        - Unit price: $${item.price}
+        - Quantity: ${item.quantity}
+        - Item subtotal: $${item.price * item.quantity}`);
+  }
 }
