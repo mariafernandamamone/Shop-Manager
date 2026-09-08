@@ -57,7 +57,11 @@ function countTotalProducts(cart) {
  * 4. Return subtotal.
  */
 function calculateSubtotal(cart) {
-  // TODO: Implement logic here
+    let subtotal = 0;
+    for (const item of cart) {
+        subtotal += item.price * item.quantity;
+    }
+    return subtotal;
 }
 
 /**
