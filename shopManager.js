@@ -191,7 +191,20 @@ function addProduct(cart, productCatalog, productId, quantity) {
  * @param {number} productId - The ID of the item to remove.
  * @returns {boolean} True if removed, false if product was not in cart.
  */
-function removeProduct(cart, productId) {}
+function removeProduct(cart, productId) {
+  for (let i = 0; i < cart.length; i++) {
+    // Column 0 contains the product ID
+    if (cart[i][0] === productId) {
+      let removedName = cart[i][1]; // Column 1 contains the product Name
+      cart.splice(i, 1); // Deletes 1 row at index i
+      console.log(`🗑️ Removed ${removedName} from cart.`);
+      return true;
+    }
+  }
+
+  console.log(`❌ Error: Product with ID ${productId} is not in your cart.`);
+  return false;
+}
 
 /**
  * Empties all items from the shopping cart matrix.
@@ -199,4 +212,8 @@ function removeProduct(cart, productId) {}
  * @param {Array<Array>} cart - The 2D shopping cart matrix.
  * @returns {void}
  */
-function clearCart(cart) {}
+function clearCart(cart) {
+  cart.length = 0; // Completely clears the 2D matrix
+  console.log("🧹 Shopping cart cleared!");
+}
+

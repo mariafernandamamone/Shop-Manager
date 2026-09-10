@@ -6,8 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Fernanda Mamone",
   "license": "ISC",
-  "description": "",
-  "type": "module"
+  "description": "Shop Manager CLI system built with 2D array matrices and standard loops."
 }
