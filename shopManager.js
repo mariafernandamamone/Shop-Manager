@@ -2,8 +2,9 @@
  * ============================================================================
  * PROJECT: Shop Manager CLI System
  * DESCRIPTION:
- * A store management application built using 2D arrays (matrices) and classic
- * loops (i, j) in Node.js.
+ * A terminal-based shopping cart and user management system built for a Master's
+ * portfolio project. Uses 2D array matrices, matrix indices [i][j], primitive
+ * types, and classic procedural control flows (loops and conditionals) in Node.js.
  * ============================================================================
  */
 
@@ -45,6 +46,10 @@ let shopSettings = [0.1, "DESCUENTO10"];
 
 /**
  * Helper Function #1: countTotalProducts
+ * Counts the total quantity of item units stored in the cart.
+ *
+ * @param {Array<Array>} cart - The 2D shopping cart matrix.
+ * @returns {number} The total count of item units across all rows.
  * Column 4 is Quantity -> cart[i][4]
  */
 function countTotalProducts(cart) {
@@ -57,6 +62,10 @@ function countTotalProducts(cart) {
 
 /**
  * Helper Function #2: calculateSubtotal
+ * Calculates the gross subtotal amount before applying any discounts.
+ *
+ * @param {Array<Array>} cart - The 2D shopping cart matrix.
+ * @returns {number} Sum of (Unit Price * Quantity) for all cart items.
  * Column 2 is Price -> cart[i][2]
  * Column 4 is Quantity -> cart[i][4]
  */
@@ -72,6 +81,11 @@ function calculateSubtotal(cart) {
 
 /**
  * Helper Function #3: calculateDiscount
+ * Calculates total monetary savings for eligible cart items.
+ *
+ * @param {Array<Array>} cart - The 2D shopping cart matrix.
+ * @param {number} [discountRate=shopSettings[0]] - The percentage rate (e.g., 0.10).
+ * @returns {number} Total currency amount saved via discount.
  * Column 2 is Price -> cart[i][2]
  * Column 3 is AppliesDiscount (boolean) -> cart[i][3]
  * Column 4 is Quantity -> cart[i][4]
@@ -91,6 +105,10 @@ function calculateDiscount(cart, discountRate = shopSettings[0]) {
 
 /**
  * Helper Function #4: displayCartItems
+ * Logs an itemized list of items in the cart to the terminal.
+ *
+ * @param {Array<Array>} cart - The 2D shopping cart matrix.
+ * @returns {void}
  * Reads each row i and logs columns 1, 2, and 4
  */
 function displayCartItems(cart) {
@@ -117,41 +135,68 @@ function displayCartItems(cart) {
 
 /**
  * Main Operational Function #1: addProduct
- * Adds a product to the cart or increments its quantity if already present.
+ * Adds a catalog product to the shopping cart or increases its quantity if already present.
  *
- * @param {Array} cart - Global shopping cart array
- * @param {Array} products - Store product catalog
- * @param {number} productId - ID of the product to add
- * @param {number} quantity - Quantity units requested
+ * @param {Array<Array>} cart - The 2D shopping cart matrix.
+ * @param {Array<Array>} productCatalog - The 2D store catalog matrix.
+ * @param {number} productId - The ID of the item to add.
+ * @param {number} quantity - Number of units requested.
+ * @returns {boolean} True if successfully added/updated, false if product not found.
  */
-function addProduct(cart, products, productId, quantity) {
-  // 1. Check if product exists in the catalog
-  const catalogProduct = products.find((p) => p.id === productId);
+function addProduct(cart, productCatalog, productId, quantity) {
+  // 1. Search for the product in productCatalog matrix
+  let productRow = null;
+  for (let i = 0; i < productCatalog.length; i++) {
+    if (productCatalog[i][0] === productId) {
+      productRow = productCatalog[i];
+      break;
+    }
+  }
 
-  if (!catalogProduct) {
-    console.log(
-      `❌ Error: Product with ID ${productId} does not exist in store.`,
-    );
+  if (productRow === null) {
+    console.log("❌ Error: Product ID not found in store catalog.");
     return false;
   }
 
-  // 2. Check if product is already inside the shopping cart
-  const cartItem = cart.find((item) => item.id === productId);
+  // 2. Check if the product is already in the cart matrix
+  let foundInCart = false;
+  for (let i = 0; i < cart.length; i++) {
+    if (cart[i][0] === productId) {
+      cart[i][4] += quantity; // Column 4 is Quantity
+      foundInCart = true;
+      console.log(`Updated ${cart[i][1]} quantity to ${cart[i][4]}.`);
+      break;
+    }
+  }
 
-  if (cartItem) {
-    // If it exists in cart, increment quantity
-    cartItem.quantity += quantity;
-    console.log(
-      `Updated ${catalogProduct.name} quantity to ${cartItem.quantity}.`,
-    );
-  } else {
-    // If new to cart, create a new object using spread operator
-    cart.push({
-      ...catalogProduct,
-      quantity: quantity,
-    });
-    console.log(`Added ${quantity}x ${catalogProduct.name} to cart.`);
+  // 3. If not in cart, push a new row to the cart matrix
+  if (foundInCart === false) {
+    cart.push([
+      productRow[0], // ID
+      productRow[1], // Name
+      productRow[2], // Price
+      productRow[3], // AppliesDiscount
+      quantity, // Quantity
+    ]);
+    console.log(`Added ${quantity}x ${productRow[1]} to cart.`);
   }
 
   return true;
 }
+
+/**
+ * Removes a specific product completely from the shopping cart matrix by its ID.
+ *
+ * @param {Array<Array>} cart - The 2D shopping cart matrix.
+ * @param {number} productId - The ID of the item to remove.
+ * @returns {boolean} True if removed, false if product was not in cart.
+ */
+function removeProduct(cart, productId) {}
+
+/**
+ * Empties all items from the shopping cart matrix.
+ *
+ * @param {Array<Array>} cart - The 2D shopping cart matrix.
+ * @returns {void}
+ */
+function clearCart(cart) {}
