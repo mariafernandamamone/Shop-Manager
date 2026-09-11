@@ -217,3 +217,71 @@ function clearCart(cart) {
   console.log("🧹 Shopping cart cleared!");
 }
 
+/**
+ * Finalizes the order, calculates totals with discounts, prints a receipt,
+ * and clears the cart matrix.
+ *
+ * @param {Array<Array>} cart - The 2D shopping cart matrix.
+ * @param {Array} settings - Store settings array [0: discountRate, 1: discountCode].
+ * @returns {boolean} True if purchase succeeded, false if cart was empty.
+ */
+function confirmPurchase(cart, settings) {
+  if (cart.length === 0) {
+    console.log("Cart is empty");
+    return false;
+  } else {
+    displayCartItems(cart);
+    let subTotal = calculateSubtotal(cart);
+    let discount = calculateDiscount(cart, settings[0]);
+    let finalTotal = subTotal - discount;
+
+    console.log(`
+      - Subtotal: $${subTotal}
+      - Discount: $${discount}
+      - Total: $${finalTotal}`);
+
+    clearCart(cart);
+    return true;
+  }
+}
+
+/**
+ * Displays all registered users from the users matrix in a formatted list.
+ *
+ * @param {Array<Array>} userMatrix - The 2D users matrix (e.g., users).
+ * @returns {void}
+ */
+function displayUsers(userMatrix) {
+  if (userMatrix.length === 0) {
+    console.log("No registered users found");
+    return;
+  } 
+  
+  console.log("\n=== REGISTERED USERS ===");
+  for (let i = 0; i < userMatrix.length; i++) {
+    let id = userMatrix[i][0];
+    let name = userMatrix[i][1];
+    let email = userMatrix[i][2];
+    let phone = userMatrix[i][3];
+
+    console.log(`- ID: ${id} | Name: ${name} | Email: ${email} | Phone: ${phone}`);
+  }
+}
+
+/**
+ * Registers a new client row in the users matrix.
+ *
+ * @param {Array<Array>} userMatrix - The 2D users matrix.
+ * @param {number} id - Unique identification number for the user.
+ * @param {string} name - Full name of the user.
+ * @param {string} email - Email address of the user.
+ * @param {string} phone - Contact phone number of the user.
+ * @returns {void}
+ */
+function addUser(userMatrix, id, name, email, phone) {
+  let newUser = [id, name, email, phone];
+  userMatrix.push(newUser);
+
+  console.log(`👤 User "${name}" was successfully registered!`);
+}
+
