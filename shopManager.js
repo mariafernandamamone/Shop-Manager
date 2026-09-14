@@ -8,6 +8,8 @@
  * ============================================================================
  */
 
+const readline = require("readline");
+
 // ============================================================================
 // 1. DATA MATRICES & GLOBAL VARIABLES
 // ============================================================================
@@ -38,10 +40,10 @@ let shoppingCart = [];
 
 // STORE SETTINGS ARRAY
 // Indices: [0: Discount Rate (10%), 1: Discount Code]
-let shopSettings = [0.1, "DESCUENTO10"];
+let shopSettings = [0.1, "DISCOUNT10"];
 
 // ============================================================================
-// HELPER FUNCTIONS (UTILITY & CALCULATIONS)
+// 2. HELPER FUNCTIONS (UTILITY & CALCULATIONS)
 // ============================================================================
 
 /**
@@ -130,11 +132,40 @@ function displayCartItems(cart) {
 }
 
 // ============================================================================
-// MAIN OPERATIONAL FUNCTIONS
+// 3. MAIN OPERATIONAL FUNCTIONS
 // ============================================================================
 
 /**
- * Main Operational Function #1: addProduct
+ * Main Operational Function #1: displayProducts
+ * Displays all products from the products matrix in a formatted catalog.
+ *
+ * @param {Array<Array>} productsMatrix - The 2D products matrix.
+ * @returns {void}
+ */
+function displayProducts(productsMatrix) {
+  if (productsMatrix.length === 0) {
+    console.log("No products available.");
+    return;
+  }
+
+  console.log("\n=== PRODUCT CATALOG ===");
+  for (let i = 0; i < productsMatrix.length; i++) {
+    let id = productsMatrix[i][0];
+    let name = productsMatrix[i][1];
+    let price = productsMatrix[i][2];
+    let appliesDiscount = productsMatrix[i][3];
+
+    // Format boolean to user-friendly text
+    let discountTag = appliesDiscount ? "Yes" : "No";
+
+    console.log(
+      `ID: ${id} | Name: ${name} | Price: $${price} | Discount Eligible: ${discountTag}`,
+    );
+  }
+}
+
+/**
+ * Main Operational Function #2: addProduct
  * Adds a catalog product to the shopping cart or increases its quantity if already present.
  *
  * @param {Array<Array>} cart - The 2D shopping cart matrix.
@@ -185,6 +216,7 @@ function addProduct(cart, productCatalog, productId, quantity) {
 }
 
 /**
+ * Main Operational Function #3: removeProduct
  * Removes a specific product completely from the shopping cart matrix by its ID.
  *
  * @param {Array<Array>} cart - The 2D shopping cart matrix.
@@ -207,6 +239,7 @@ function removeProduct(cart, productId) {
 }
 
 /**
+ * Main Operational Function #4: clearCart
  * Empties all items from the shopping cart matrix.
  *
  * @param {Array<Array>} cart - The 2D shopping cart matrix.
@@ -218,6 +251,7 @@ function clearCart(cart) {
 }
 
 /**
+ * Main Operational Function #5: confirmPurchase
  * Finalizes the order, calculates totals with discounts, prints a receipt,
  * and clears the cart matrix.
  *
@@ -246,6 +280,7 @@ function confirmPurchase(cart, settings) {
 }
 
 /**
+ * Main Operational Function #6: displayUsers
  * Displays all registered users from the users matrix in a formatted list.
  *
  * @param {Array<Array>} userMatrix - The 2D users matrix (e.g., users).
@@ -255,8 +290,8 @@ function displayUsers(userMatrix) {
   if (userMatrix.length === 0) {
     console.log("No registered users found");
     return;
-  } 
-  
+  }
+
   console.log("\n=== REGISTERED USERS ===");
   for (let i = 0; i < userMatrix.length; i++) {
     let id = userMatrix[i][0];
@@ -264,11 +299,14 @@ function displayUsers(userMatrix) {
     let email = userMatrix[i][2];
     let phone = userMatrix[i][3];
 
-    console.log(`- ID: ${id} | Name: ${name} | Email: ${email} | Phone: ${phone}`);
+    console.log(
+      `- ID: ${id} | Name: ${name} | Email: ${email} | Phone: ${phone}`,
+    );
   }
 }
 
 /**
+ * Main Operational Function #7: addUser
  * Registers a new client row in the users matrix.
  *
  * @param {Array<Array>} userMatrix - The 2D users matrix.
@@ -285,3 +323,113 @@ function addUser(userMatrix, id, name, email, phone) {
   console.log(`👤 User "${name}" was successfully registered!`);
 }
 
+// ============================================================================
+// 4. MAIN MENU CLI LOOP
+// ============================================================================
+
+/**
+ * Starts the interactive command-line interface menu loop.
+ */
+function mainMenu() {
+  console.clear();
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  function showMenu() {
+    console.log(`
+========================================
+         SHOP MANAGER MAIN MENU         
+========================================
+1. View Product Catalog
+2. Add Product to Cart
+3. View Shopping Cart
+4. Remove Product from Cart
+5. Clear Cart
+6. Confirm Purchase
+7. Display Registered Users
+8. Add New User
+9. Exit System
+----------------------------------------`);
+
+    rl.question("Select an option (1-9): ", (choice) => {
+      switch (choice.trim()) {
+        case "1":
+          displayProducts(products);
+          showMenu();
+          break;
+
+        case "2":
+          rl.question("\nEnter Product ID: ", (idInput) => {
+            rl.question("Enter Quantity: ", (qtyInput) => {
+              let productId = Number(idInput);
+              let quantity = Number(qtyInput);
+
+              addProduct(shoppingCart, products, productId, quantity);
+
+              showMenu();
+            });
+          });
+          break;
+
+        case "3":
+          displayCartItems(shoppingCart);
+          showMenu();
+        break;
+
+        case "4":
+          rl.question("\nEnter Product ID to remove: ", (idInput) => {
+            removeProduct(shoppingCart, Number(idInput));
+            showMenu();
+          });
+        break;
+        
+        case "5":
+          clearCart(shoppingCart);   
+          showMenu();       
+          break;
+
+        case "6":
+          confirmPurchase(shoppingCart, shopSettings);
+          showMenu();
+          break;
+
+        case "7":
+          displayUsers(users);
+          showMenu();
+          break;
+
+        case "8":
+          rl.question("\nEnter User ID: ", (idInput) => {
+            rl.question("Enter Name: ", (name) => {
+              rl.question("Enter Email: ", (email) => {
+                rl.question("Enter Phone: ", (phone) => {
+                  let id = Number(idInput);
+                  addUser(users, id, name, email, phone);
+                  showMenu();
+                });
+              });
+            });
+          });
+          break;
+
+        case "9":
+          console.log("\n👋 Goodbye!");
+          rl.close();
+          break;
+
+        default:
+          console.log(
+            "\n❌ Invalid option. Please enter a number between 1 and 9.",
+          );
+          showMenu();
+          break;
+      }
+    });
+  }
+  showMenu();
+}
+
+// Start the application
+mainMenu();
